@@ -1,6 +1,9 @@
 import csv
 import json
+# file_b.py
 
+import sys
+sys.path.insert(0, '..')
 from story.utils import *
 
 
@@ -8,8 +11,7 @@ def load_tree(filename):
     with open(filename, "r") as fp:
         tree = json.load(fp)
     return tree
-
-
+ 
 def remove_phrase(text):
     phrases = ["Years pass...", "Years pass"]
     for phrase in phrases:
@@ -19,9 +21,12 @@ def remove_phrase(text):
 
 def make_stories(current_story, tree):
     stories = []
+    
     action = first_to_second_person(tree["action"])
+    
     action_list = action.split(" ")
     first_word = action_list[0]
+    print(first_word)
     if first_word[-1] == ".":
         first_word = first_word[:-1]
 
@@ -85,21 +90,19 @@ def get_stories(filename):
         stories += make_stories(tree["first_story_block"], action_result)
     return stories
 
-
-output_file_path = "text_adventures.txt"
-with open(output_file_path, "w") as output_file:
-    filenames = ["stories/story" + str(i) + ".json" for i in range(0, 93)]
-    # filenames = []
+output_file_path = "text_adventures3.txt"
+with open(output_file_path, "w",encoding="utf-8") as output_file:
+    filenames = ["stories/story" + str(i) + ".json" for i in range(0, 1)]
+    
     for filename in filenames:
         tree = load_tree(filename)
         print('"' + tree["tree_id"] + '",')
 
-    filenames += ["stories/crowdsourcedstory" + str(i) + ".json" for i in range(0, 12)]
     stories = []
     for filename in filenames:
         filename_stories = get_stories(filename)
         stories += filename_stories
-        print(len(stories))
+        #print(len(stories))
 
     raw_text = ""
     start_token = "<|startoftext|>"

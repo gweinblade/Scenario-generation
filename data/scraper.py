@@ -3,6 +3,7 @@ import time
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 
 
 """
@@ -26,12 +27,12 @@ dict{
 class Scraper:
     def __init__(self):
         chrome_options = Options()
-        chrome_options.add_argument("--binary=/path/to/other/chrome/binary")
+        #chrome_options.add_argument("--binary=C:\Program Files (x86)\chromedriver.exe")
         chrome_options.add_argument("--incognito")
         chrome_options.add_argument("--window-size=1920x1080")
-        exec_path = "/usr/bin/chromedriver"
+        exec_path = "C:\Program Files (x86)\chromedriver.exe"
         self.driver = webdriver.Chrome(
-            chrome_options=chrome_options, executable_path=exec_path
+             ChromeDriverManager().install()
         )
         self.max_depth = 10
         self.end_actions = {
@@ -45,6 +46,20 @@ class Scraper:
             "Your quest might have been more successful...",
             "5 - not the best, certainly not the worst",
             "The End! (leave comments on game)",
+            "The End",
+            "Truth mode.",
+            "Truth Mode",
+            "Bad End 1",
+            "Bad End 2",
+            "Bad End 3; Erased from existance",
+            "Bad End 4; Death By Ignorance",
+            "Bad End 5; No Time Left",
+            "Bad End 6; Burned Alive",
+            "Bad End 7; Sphinx attack",
+            "To be Continued. . . End Game and Leave Comments",
+            "Good End 2; Business As Usual",
+            "Good End 3; A friend in me",
+            "Start Over",
             "6 - it's worth every cent",
             "You do not survive the journey to California",
             "Quit the game.",
@@ -59,8 +74,28 @@ class Scraper:
             "Thank you for taking the time to read my story",
             "You have no further part in the story, End Game and Leave Comments",
             "",
+            "I'm gonna sing the death song: Death, death, death, death...",
+            "Face her Riddles",
             "You play no further part in this story. End Game and Leave Comments",
             "drivers",
+            "Eaten by sharks",
+            "That's unfortunate",
+            "Dead!",
+            "GOOD JOB YOU WIN!",
+            "Aw, nuts!!",
+            "You're so dead",
+            "Pain sucks!",
+            "Eaten by the serpent",
+            "My heart bleeds for you",
+            "Too bad...",
+            "Death is such a nasty word.",
+            "Too bad",
+            "Blub, blub...",
+            "You're going to die, now",
+            "You should be ashamed of yourself",
+            "Your adventure begins... all over again!",
+            "Decapitated!",
+            "Sharks can be murder",
             "Alas, poor Yorick, they slew you well",
             "My heart bleeds for you",
             "To End the Game and Leave Comments click here",
@@ -75,9 +110,12 @@ class Scraper:
             "End.",
             "Pick up some money real quick",
             "",
+            "Good End",
+            "Synopsis mode. (Was there something you wanted to know? Click here!) *Spoiler Alert!*",
             "Well you did live a decent amount of time in the Army",
             "End Game",
             "You have survived the Donner Party's journey to California!",
+            "Thank you for playing my game, leave a comment to see your Score!",
         }
         self.texts = set()
 
@@ -167,109 +205,24 @@ class Scraper:
 def save_tree(tree, filename):
     with open(filename, "w") as fp:
         json.dump(tree, fp)
-
-
 scraper = Scraper()
-
 urls = [
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10638",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=11246",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=54639",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7397",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8041",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=11545",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7393",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=13875",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=37696",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=31013",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=45375",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=41698",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10634",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=42204",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=6823",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=18988",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10359",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=5466",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=28030",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=56515",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7480",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=11274",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=53134",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=17306",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=470",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8041",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=23928",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10183",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=45866",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=60232",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=6376",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=36791",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=60128",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=52961",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=54011",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=34838",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=13349",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8038",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=56742",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=48393",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=53356",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10872",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7393",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=31013",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=43910",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=53837",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8098",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=55043",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=28838",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=11906",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8040",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=2280",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=31014",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=43744",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=44543",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=56753",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=36594",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=15424",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8035",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10524",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=14899",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=9361",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=28030",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=49642",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=43573",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=38025",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7480",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7567",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=60747",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10359",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=31353",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=13875",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=56501",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=38542",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=42204",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=43993",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=1153",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=24743",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=57114",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=52887",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=21879",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=16489",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=53186",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=34849",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=26752",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7094",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8557",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=45225",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=4720",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=51926",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=45375",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=27234",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=60772",
+
+   "https://chooseyourstory.com/story/viewer/default.aspx?StoryId=106",
+   "https://chooseyourstory.com/story/viewer/default.aspx?StoryId=36462",
+   "https://chooseyourstory.com/story/viewer/default.aspx?StoryId=38525",
+   "https://chooseyourstory.com/story/viewer/default.aspx?StoryId=25611",
+   "https://chooseyourstory.com/story/viewer/default.aspx?StoryId=60875",
+   "https://chooseyourstory.com/story/viewer/default.aspx?StoryId=62020"
+   
+   
+
+
 ]
 
-for i in range(50, len(urls)):
+for i in range(len(urls)):
     print("****** Extracting Adventure ", urls[i], " ***********")
     tree = scraper.BuildStoryTree(urls[i])
-    save_tree(tree, "stories/story" + str(41 + i) + ".json")
+    save_tree(tree, "stories/story" + str(36 + i) + ".json")
 
 print("done")

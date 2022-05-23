@@ -8,7 +8,7 @@ from profanityfilter import ProfanityFilter
 YAML_FILE = "story/story_data.yaml"
 
 
-with open("story/censored_words.txt", "r") as f:
+with open("C:/Users/mehdi/Desktop/Scenario generation/story/censored_words.txt", "r") as f:
     censored_words = [l.replace("\n", "") for l in f.readlines()]
 
 pf = ProfanityFilter(custom_censor_list=censored_words)
@@ -48,11 +48,6 @@ def get_num_options(num):
 
 
 def player_died(text):
-    """
-    TODO: Add in more sophisticated NLP, maybe a custom classifier
-    trained on hand-labelled data that classifies second-person
-    statements as resulting in death or not.
-    """
     lower_text = text.lower()
     you_dead_regexps = [
         "you('re| are) (dead|killed|slain|no more|nonexistent)",
@@ -80,8 +75,6 @@ def player_won(text):
 
 def remove_profanity(text):
     return pf.censor(text)
-
-
 def cut_trailing_quotes(text):
     num_quotes = text.count('"')
     if num_quotes % 2 is 0:
@@ -89,8 +82,6 @@ def cut_trailing_quotes(text):
     else:
         final_ind = text.rfind('"')
         return text[:final_ind]
-
-
 def split_first_sentence(text):
     first_period = text.find(".")
     first_exclamation = text.find("!")
@@ -103,8 +94,6 @@ def split_first_sentence(text):
         split_point = text[0:20]
 
     return text[0:split_point], text[split_point:]
-
-
 def cut_trailing_action(text):
     lines = text.split("\n")
     last_line = lines[-1]
@@ -116,8 +105,6 @@ def cut_trailing_action(text):
     ) and len(lines) > 1:
         text = "\n".join(lines[0:-1])
     return text
-
-
 def cut_trailing_sentence(text):
     text = standardize_punctuation(text)
     last_punc = max(text.rfind("."), text.rfind("!"), text.rfind("?"))
@@ -137,7 +124,6 @@ def cut_trailing_sentence(text):
     text = cut_trailing_quotes(text)
     text = cut_trailing_action(text)
     return text
-
 
 def replace_outside_quotes(text, current_word, repl_word):
     text = standardize_punctuation(text)

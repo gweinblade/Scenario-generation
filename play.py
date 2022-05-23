@@ -20,14 +20,7 @@ parser.add_argument(
 )
 
 
-def splash():
-    print("0) New Game\n1) Load Game\n")
-    choice = get_num_options(2)
 
-    if choice == 1:
-        return "load"
-    else:
-        return "new"
 
 
 def random_story(story_data):
@@ -93,7 +86,7 @@ def select_game():
     name = input("\nWhat is your name? ")
     setting_description = data["settings"][setting_key]["description"]
     character = data["settings"][setting_key]["characters"][character_key]
-
+    print(character)
     return setting_key, character_key, name, character, setting_description
 
 
@@ -137,91 +130,45 @@ def get_curated_exposition(
     return context, prompt
 
 
-def instructions():
-    text = "\nAI Dungeon 2 Instructions:"
-    text += '\n Enter actions starting with a verb ex. "go to the tavern" or "attack the orc."'
-    text += '\n To speak enter \'say "(thing you want to say)"\' or just "(thing you want to say)" '
-    text += "\n\nThe following commands can be entered for any action: "
-    text += '\n  "/revert"   Reverts the last action allowing you to pick a different action.'
-    text += '\n  "/quit"     Quits the game and saves'
-    text += '\n  "/reset"    Starts a new game and saves your current one'
-    text += '\n  "/restart"  Starts the game from beginning with same settings'
-    text += '\n  "/save"     Makes a new save of your game and gives you the save ID'
-    text += '\n  "/load"     Asks for a save ID and loads the game if the ID is valid'
-    text += '\n  "/print"    Prints a transcript of your adventure (without extra newline formatting)'
-    text += '\n  "/help"     Prints these instructions again'
-    text += '\n  "/censor off/on" to turn censoring off or on.'
-    return text
-
 
 def play_aidungeon_2(args):
-    """
-    Entry/main function for starting AIDungeon 2
-
-    Arguments:
-        args (namespace): Arguments returned by the
-                          ArgumentParser
-    """
-
-    console_print(
-        "AI Dungeon 2 will save and use your actions and game to continually improve AI Dungeon."
-        + " If you would like to disable this enter '/nosaving' as an action. This will also turn off the "
-        + "ability to save games."
-    )
-
     upload_story = True
 
-    print("\nInitializing AI Dungeon! (This might take a few minutes)\n")
+    print("\nInitializing ! (This might take a few minutes)\n")
     generator = GPT2Generator(force_cpu=args.cpu)
     story_manager = UnconstrainedStoryManager(generator)
     print("\n")
-
-    with open("opening.txt", "r", encoding="utf-8") as file:
-        starter = file.read()
-    print(starter)
 
     while True:
         if story_manager.story != None:
             story_manager.story = None
 
-        while story_manager.story is None:
+        while story_manager.story is None:   
             print("\n\n")
-            splash_choice = splash()
+            (
+                setting_key,
+                character_key,
+                name,
+                character,
+                setting_description,
+            ) = select_game()
 
-            if splash_choice == "new":
-                print("\n\n")
-                (
-                    setting_key,
-                    character_key,
-                    name,
-                    character,
-                    setting_description,
-                ) = select_game()
-
-                if setting_key == "custom":
-                    context, prompt = get_custom_prompt()
-
-                else:
-                    context, prompt = get_curated_exposition(
-                        setting_key, character_key, name, character, setting_description
-                    )
-
-                console_print(instructions())
-                print("\nGenerating story...")
-
-                result = story_manager.start_new_story(
-                    prompt, context=context, upload_story=upload_story
-                )
-                print("\n")
-                console_print(result)
+            if setting_key == "custom":
+                context, prompt = get_custom_prompt()
 
             else:
-                load_ID = input("What is the ID of the saved game? ")
-                result = story_manager.load_new_story(
-                    load_ID, upload_story=upload_story
+                context, prompt = get_curated_exposition(
+                    setting_key, character_key, name, character, setting_description
                 )
-                print("\nLoading Game...\n")
-                console_print(result)
+            print("\nGenerating story...")
+
+            result = story_manager.start_new_story(
+                prompt, context=context, upload_story=upload_story
+            )
+            print("\n")
+            console_print(result)
+
+            
 
         while True:
             sys.stdin.flush()
@@ -230,93 +177,6 @@ def play_aidungeon_2(args):
                 split = action[1:].split(" ")  # removes preceding slash
                 command = split[0].lower()
                 args = split[1:]
-                if command == "reset":
-                    story_manager.story.get_rating()
-                    break
-
-                elif command == "restart":
-                    story_manager.story.actions = []
-                    story_manager.story.results = []
-                    console_print("Game restarted.")
-                    console_print(story_manager.story.story_start)
-                    continue
-
-                elif command == "quit":
-                    story_manager.story.get_rating()
-                    exit()
-
-                elif command == "nosaving":
-                    upload_story = False
-                    story_manager.story.upload_story = False
-                    console_print("Saving turned off.")
-
-                elif command == "help":
-                    console_print(instructions())
-
-                elif command == "censor":
-                    if len(args) == 0:
-                        if generator.censor:
-                            console_print("Censor is enabled.")
-                        else:
-                            console_print("Censor is disabled.")
-                    elif args[0] == "off":
-                        if not generator.censor:
-                            console_print("Censor is already disabled.")
-                        else:
-                            generator.censor = False
-                            console_print("Censor is now disabled.")
-
-                    elif args[0] == "on":
-                        if generator.censor:
-                            console_print("Censor is already enabled.")
-                        else:
-                            generator.censor = True
-                            console_print("Censor is now enabled.")
-
-                    else:
-                        console_print("Invalid argument: {}".format(args[0]))
-
-                elif command == "save":
-                    if upload_story:
-                        id = story_manager.story.save_to_storage()
-                        console_print("Game saved.")
-                        console_print(
-                            "To load the game, type 'load' and enter the "
-                            "following ID: {}".format(id)
-                        )
-                    else:
-                        console_print("Saving has been turned off. Cannot save.")
-
-                elif command == "load":
-                    if len(args) == 0:
-                        load_ID = input("What is the ID of the saved game?")
-                    else:
-                        load_ID = args[0]
-                    result = story_manager.story.load_from_storage(load_ID)
-                    console_print("\nLoading Game...\n")
-                    console_print(result)
-
-                elif command == "print":
-                    print("\nPRINTING\n")
-                    print(str(story_manager.story))
-
-                elif command == "revert":
-                    if len(story_manager.story.actions) == 0:
-                        console_print("You can't go back any farther. ")
-                        continue
-
-                    story_manager.story.actions = story_manager.story.actions[:-1]
-                    story_manager.story.results = story_manager.story.results[:-1]
-                    console_print("Last action reverted. ")
-                    if len(story_manager.story.results) > 0:
-                        console_print(story_manager.story.results[-1])
-                    else:
-                        console_print(story_manager.story.story_start)
-                    continue
-
-                else:
-                    console_print("Unknown command: {}".format(command))
-
             else:
                 if action == "":
                     action = ""
